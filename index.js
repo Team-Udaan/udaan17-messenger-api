@@ -10,7 +10,8 @@ const connection = mysql.createConnection(config.connection)
 const app = express()
 
 const cors = require('cors')()
-const bodyParser = require('body-parser').json()
+const json = require('body-parser').json()
+const urlencoded = require('body-parser').urlencoded()
 
 let eventManagers = {}
 
@@ -22,12 +23,11 @@ const promote = require('./endpoints/promote')
 const textLocal = require('./endpoints/textLocal')(config)
 
 app.use(cors)
-app.use(bodyParser)
 
 app.options(['/data', '/promote'], optionHeaders)
-app.post('/data', authenticate, data)
-app.post('/promote', authenticate, validatePromotion, promote)
-app.post('/text-local', textLocal)
+app.post('/data', json, authenticate, data)
+app.post('/promote', json, authenticate, validatePromotion, promote)
+app.post('/text-local', urlencoded, textLocal)
 
 const server = https.createServer({
   key: fs.readFileSync(path.join(__dirname, config.server.key)),
