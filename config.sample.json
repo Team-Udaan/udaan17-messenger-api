@@ -9,8 +9,17 @@
     "host": "<host>",
     "user": "<user>",
     "password": "<password>",
-    "database": "<database>"
+    "database": "<database>",
+    "multipleStatements": true
   },
-  "secret": "<secret>",
-  "bypassLogin": false
+  "sms": {
+    "test": true,
+    "username": "<username>",
+    "hash": "<hash>",
+    "sender": "<sender>",
+    "receiptUrls": {
+      "round": "<round>"
+    }
+  },
+  "secret": "<secret>"
 }

@@ -2,21 +2,21 @@ const crypto = require('crypto')
 
 module.exports = (config, eventManagers) => (req, res, next) => {
 
-  // Bypass Login
-  if (config.bypassLogin) {
-    next()
+  // Missing email
+  if (!req.body.email) {
+    res.json({success: false, error: 'Missing email.'})
     return
   }
 
-  // Missing credentials
-  if (!req.body.email || !req.body.password) {
-    res.json({success: false, error: 'Missing credentials.'})
+  // Missing password
+  if (!req.body.password) {
+    res.json({success: false, error: 'Missing password.'})
     return
   }
 
   // Invalid Email
   if (!eventManagers[req.body.email]) {
-    res.json({success: false, error: 'Incorrect email.'})
+    res.json({success: false, error: 'Invalid email.'})
     return
   }
 
@@ -24,7 +24,7 @@ module.exports = (config, eventManagers) => (req, res, next) => {
   const hmac = crypto.createHmac('sha256', config.secret)
   hmac.update(req.body.email)
   if (hmac.digest('hex').slice(0, 8) != req.body.password) {
-    res.json({success: false, error: 'Incorrect password.'})
+    res.json({success: false, error: 'Invalid password.'})
     return
   }
 

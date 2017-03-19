@@ -11,23 +11,24 @@ const app = express()
 
 const cors = require('cors')()
 const json = require('body-parser').json()
-const urlencoded = require('body-parser').urlencoded()
+const urlencoded = require('body-parser').urlencoded({extended: true})
 
 let eventManagers = {}
 
-const optionHeaders = require('./endpoints/optionHeaders')
 const authenticate = require('./middlewares/authenticate')(config, eventManagers)
 const data = require('./endpoints/data')(connection)
 const validatePromotion = require('./middlewares/validatePromotion')(connection)
-const promote = require('./endpoints/promote')
-const textLocal = require('./endpoints/textLocal')(config)
+const promote = require('./endpoints/promote')(config, connection)
+const textLocal = require('./endpoints/textLocal')(connection)
+const textLocalRound = require('./endpoints/textLocalRound')(connection)
 
 app.use(cors)
 
-app.options(['/data', '/promote'], optionHeaders)
+app.options((_, res) => res.end())
 app.post('/data', json, authenticate, data)
 app.post('/promote', json, authenticate, validatePromotion, promote)
 app.post('/text-local', urlencoded, textLocal)
+app.post('/text-local/round', urlencoded, textLocalRound)
 
 const server = https.createServer({
   key: fs.readFileSync(path.join(__dirname, config.server.key)),
