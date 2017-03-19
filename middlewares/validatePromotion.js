@@ -54,7 +54,6 @@ module.exports = connection => (req, res, next) => {
         return
       }
 
-      req.body.time = new Date(time)
       req.body.participations = results
       next()
     })

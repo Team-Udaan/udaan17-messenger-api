@@ -1,4 +1,5 @@
 const request = require('request')
+const moment = require('moment')
 
 module.exports = (config, connection) => (req, res) => {
 
@@ -24,15 +25,12 @@ module.exports = (config, connection) => (req, res) => {
           hash,
           sender,
           numbers: participations.map(participation => participation.mobile).join(','),
-          message: `Dear Participant, Round ${
-            round} of ${
-            event} is on ${
-            time.getDate()}-${time.getMonth()}-${time.getFullYear()} ${time.getHours() % 12}:${time.getMinutes()} ${
-            time.getHours() < 12 ? 'AM' : 'PM'} at ${
-            venue}. Kindly be present at the venue on time.`,
+          message: `Dear Participant, Round ${round} of ${event} is on ${
+            moment(time).format('DD-MM-YYYY hh:mm A')} at ${venue}.Kindly be present at the venue on time.`,
           receipt_url: config.sms.receiptUrls.round
         }
-      }, () => {
+      }, (_, response) => {
+        console.log(response)
         res.json({success: true})
       })
 
