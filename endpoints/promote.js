@@ -19,6 +19,7 @@ module.exports = (config, connection) => (req, res) => {
         url: 'http://api.textlocal.in/send/',
         form: {
           test,
+          custom: event + round,
           username,
           hash,
           sender,
