@@ -16,6 +16,9 @@ module.exports = (config, connection) => (req, res) => {
 
       // Send texts
       const {test, username, hash, sender} = config.sms
+      const numbers = participations.map(participation => participation.mobile).join(',')
+      const message = `Dear Participant, Round ${round} of ${event} is on ${
+        moment(time).format('DD-MM-YYYY hh:mm A')} at ${venue}.Kindly be present at the venue on time.`
       request.post({
         url: 'http://api.textlocal.in/send/',
         form: {
@@ -24,16 +27,15 @@ module.exports = (config, connection) => (req, res) => {
           username,
           hash,
           sender,
-          numbers: participations.map(participation => participation.mobile).join(','),
-          message: `Dear Participant, Round ${round} of ${event} is on ${
-            moment(time).format('DD-MM-YYYY hh:mm A')} at ${venue}.Kindly be present at the venue on time.`,
+          numbers,
+          message,
           receipt_url: config.sms.receiptUrls.round
         }
-      }, (_, response) => {
-        console.log(response)
-        res.json({success: true})
+      }, () => {
+        connection.query('INSERT INTO messages VALUES (?)', [[event, round, numbers, message]], () => {
+          res.json({success: true})
+        })
       })
-
     })
   })
 }

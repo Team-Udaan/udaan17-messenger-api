@@ -49,7 +49,8 @@ module.exports = connection => (req, res, next) => {
     connection.query('SELECT * FROM participations WHERE id IN (?)', [participationIds], (_, results) => {
 
       // Invalid participationIds
-      if (results.length != participationIds.length || results.find(result => result.status.length + 1 != round)) {
+      if (results.length != participationIds.length || results.find(result => result.status.length + 1 != round)
+        || results.find(result => result.event != event)) {
         res.json({success: false, error: 'Invalid participationIds.'})
         return
       }
